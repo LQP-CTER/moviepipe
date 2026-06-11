@@ -8,6 +8,7 @@ export interface Movie {
   poster_url: string
   genre_ids: number[]
   rank?: number
+  youtube_id?: string
 }
 
 export interface MovieResponse {

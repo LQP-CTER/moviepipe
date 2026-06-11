@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import Header from './components/Header'
 import HeroBanner from './components/HeroBanner'
 import MovieGrid from './components/MovieGrid'
-import Background3D from './components/Background3D'
 import VideoModal from './components/VideoModal'
 import { fetchNowPlaying, fetchTrending, searchMovies } from './api/movies'
 import type { Movie } from './types/movie'
@@ -57,14 +56,32 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-dark">
-      <Background3D />
+    <div className="min-h-screen bg-background relative selection:bg-primary/30 selection:text-primary">
+      {/* Ambient glows */}
+      <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[120px] pointer-events-none" />
+      <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/10 blur-[120px] pointer-events-none" />
+
       <Header onSearch={handleSearch} />
 
-      <main className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 pt-28 pb-16">
-        {!searchResults && <HeroBanner />}
+      <main className="relative z-10 w-full">
+        {!searchResults && (
+          <HeroBanner 
+            onPlayTrailer={() => handleMovieClick({
+              id: 1,
+              title: "Dune: Part Two",
+              overview: "",
+              release_date: "",
+              vote_average: 0,
+              score_tier: 'high',
+              poster_url: "",
+              genre_ids: [],
+              youtube_id: 'Way9Dexny3w'
+            })} 
+          />
+        )}
 
-        {searchResults !== null ? (
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pb-24">
+          {searchResults !== null ? (
           <div>
             <div className="mb-8 flex items-center justify-between">
               <div>
@@ -75,7 +92,7 @@ function App() {
               </div>
               <button
                 onClick={handleReset}
-                className="px-6 py-2 glass-card rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all"
+                className="px-6 py-2 glass-panel rounded-xl text-text-secondary hover:text-text-primary hover:bg-white/10 transition-all"
               >
                 Back to Home
               </button>
@@ -103,6 +120,7 @@ function App() {
             </section>
           </>
         )}
+        </div>
       </main>
 
       {/* Modal xem video */}
@@ -110,19 +128,20 @@ function App() {
         isOpen={selectedMovie !== null}
         onClose={() => setSelectedMovie(null)}
         movieTitle={selectedMovie?.title || ''}
+        youtubeId={selectedMovie?.youtube_id}
       />
 
-      <footer className="relative z-10 border-t border-white/10 mt-20">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
-          <div className="flex items-center justify-between">
+      <footer className="relative z-10 border-t border-white/5 mt-auto">
+        <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-12">
+          <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/20">
                 M
               </div>
-              <span className="text-lg font-bold gradient-text">MoviePipe</span>
+              <span className="text-xl font-bold tracking-tight text-white">MoviePipe</span>
             </div>
             <p className="text-text-secondary text-sm">
-              2026 MoviePipe. Movie data from TMDB.
+              &copy; 2026 MoviePipe. Cinematic Experience.
             </p>
           </div>
         </div>
