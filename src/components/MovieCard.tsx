@@ -5,9 +5,10 @@ import { GENRE_MAP } from '../types/movie'
 interface MovieCardProps {
   movie: Movie
   index?: number
+  onClick?: (movie: Movie) => void
 }
 
-export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
+export default function MovieCard({ movie, index = 0, onClick }: MovieCardProps) {
   const cardRef = useRef<HTMLDivElement>(null)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isHovered, setIsHovered] = useState(false)
@@ -36,7 +37,7 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
     },
   }
 
-  const tier = tierConfig[movie.score_tier]
+  const tier = tierConfig[movie.score_tier] || tierConfig.mid
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!cardRef.current) return
@@ -64,7 +65,10 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
         setMousePosition({ x: 0, y: 0 })
       }}
     >
-      <div className={`relative rounded-2xl overflow-hidden glass-card ${tier.border} group`}>
+      <div 
+        className={`relative rounded-2xl overflow-hidden glass-card ${tier.border} group cursor-pointer`}
+        onClick={() => onClick?.(movie)}
+      >
         <div className="relative aspect-[2/3] overflow-hidden">
           <img
             src={
@@ -77,6 +81,15 @@ export default function MovieCard({ movie, index = 0 }: MovieCardProps) {
           />
 
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+          {/* Nút Play hiển thị khi hover */}
+          <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+            <div className="w-16 h-16 rounded-full bg-primary/80 backdrop-blur-sm flex items-center justify-center text-white shadow-lg shadow-primary/50 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round" className="ml-1">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+              </svg>
+            </div>
+          </div>
 
           {movie.rank && (
             <div className="absolute top-3 left-3">

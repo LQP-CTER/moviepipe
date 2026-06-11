@@ -3,6 +3,7 @@ import Header from './components/Header'
 import HeroBanner from './components/HeroBanner'
 import MovieGrid from './components/MovieGrid'
 import Background3D from './components/Background3D'
+import VideoModal from './components/VideoModal'
 import { fetchNowPlaying, fetchTrending, searchMovies } from './api/movies'
 import type { Movie } from './types/movie'
 
@@ -11,6 +12,7 @@ function App() {
   const [trending, setTrending] = useState<Movie[]>([])
   const [searchResults, setSearchResults] = useState<Movie[] | null>(null)
   const [loading, setLoading] = useState(true)
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,6 +52,10 @@ function App() {
     setSearchResults(null)
   }
 
+  const handleMovieClick = (movie: Movie) => {
+    setSelectedMovie(movie)
+  }
+
   return (
     <div className="min-h-screen bg-bg-dark">
       <Background3D />
@@ -74,7 +80,7 @@ function App() {
                 Back to Home
               </button>
             </div>
-            <MovieGrid movies={searchResults} loading={false} />
+            <MovieGrid movies={searchResults} loading={false} onMovieClick={handleMovieClick} />
           </div>
         ) : (
           <>
@@ -83,6 +89,7 @@ function App() {
                 movies={trending}
                 title="Trending This Week"
                 loading={loading}
+                onMovieClick={handleMovieClick}
               />
             </section>
 
@@ -91,11 +98,19 @@ function App() {
                 movies={nowPlaying}
                 title="Now Playing"
                 loading={loading}
+                onMovieClick={handleMovieClick}
               />
             </section>
           </>
         )}
       </main>
+
+      {/* Modal xem video */}
+      <VideoModal
+        isOpen={selectedMovie !== null}
+        onClose={() => setSelectedMovie(null)}
+        movieTitle={selectedMovie?.title || ''}
+      />
 
       <footer className="relative z-10 border-t border-white/10 mt-20">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
